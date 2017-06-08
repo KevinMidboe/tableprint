@@ -13,6 +13,7 @@ Usage
 from __future__ import print_function, unicode_literals
 
 import sys
+import csv
 from numbers import Number
 
 import numpy as np
@@ -21,7 +22,7 @@ from six import string_types
 from .style import LineStyle, STYLES
 from .utils import ansi_len, format_line, parse_width
 
-__all__ = ('table', 'header', 'row', 'hrule', 'top', 'bottom', 'banner', 'dataframe', 'TableContext')
+__all__ = ('table', 'header', 'row', 'hrule', 'top', 'bottom', 'banner', 'dataframe', 'TableContext', 'csvfile')
 
 STYLE = 'round'
 WIDTH = 11
@@ -269,3 +270,10 @@ def dataframe(df, **kwargs):
         A pandas DataFrame with the table to print
     """
     table(np.array(df), list(df.columns), **kwargs)
+
+
+def csvfile(filename, width=WIDTH, style=STYLE, format_spec=FMT):
+    """Prints data from the given csvfile as a table"""
+    with open(filename, 'r') as file_handle:
+        headers, *data = list(csv.reader(file_handle))
+    table([list(map(float, row)) for row in data], headers=headers, width=width, style=style, format_spec=format_spec)
